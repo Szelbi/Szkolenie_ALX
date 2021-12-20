@@ -21,6 +21,11 @@ final class UserDto
     private string $password;
 
     /**
+     * @var array
+     */
+    private array $roles = [];
+
+    /**
      * @return string
      */
     public function getEmail(): string
@@ -50,6 +55,23 @@ final class UserDto
     public function setPassword(string $password): void
     {
         $this->password = $password;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoles(): array
+    {
+        return $this->roles;
+    }
+
+
+    /**
+     * @param   array  $roles
+     */
+    public function setRoles(array $roles) : void
+    {
+        $this->roles = $roles;
     }
 
 

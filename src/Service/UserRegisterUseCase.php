@@ -28,6 +28,7 @@ final class UserRegisterUseCase
         );
 
         $user->setPassword($hashedPassword);
+        $user->setRoles($userDto->getRoles());
         $this->em->persist($user);
         $this->em->flush();
     }
