@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Repository;
+
+use App\Entity\Post;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
+
+class DoctrinePostRepository implements PostRepositoryInterface
+{
+    private ObjectManager $manager;
+    private ObjectRepository $repository;
+
+    public function __construct(ManagerRegistry $registry)
+    {
+        $this->manager = $registry->getManagerForClass(Post::class);
+		$this->repository = $this->manager->getRepository(Post::class);
+    }
+
+
+	public function findAll()
+    {
+        $query = $this->getFindAllQuery();
+
+        return $query->getResult();
+    }
+
+
+    public function getFindAllQuery(): \Doctrine\ORM\Query
+    {
+        $qb = $this->repository
+            ->createQueryBuilder('p')
+            ->andWhere('p.deletedAt IS NULL')
+            ->orderBy('p.createdAt', 'DESC');
+
+		return $qb->getQuery();
+    }
+
+	public function store(Post $post) {
+		$post->setCreatedAt(new \DateTimeImmutable());
+		$this->manager->persist($post);
+		$this->manager->flush();
+    }
+}
