@@ -16,18 +16,11 @@ final class UserDto
 
     /**
      * @Assert\Length(min=5)
-     * @return string
      */
     private string $password;
 
-    /**
-     * @var array
-     */
     private array $roles = [];
 
-    /**
-     * @return string
-     */
     public function getEmail(): string
     {
         return $this->email;
