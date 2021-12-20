@@ -8,7 +8,6 @@ use App\Repository\PostRepositoryInterface;
 
 final class EditPostUseCase
 {
-
     public function __construct(
         private PostRepositoryInterface $repository
     ) {}
@@ -16,7 +15,8 @@ final class EditPostUseCase
 
     public function __invoke(Post $post) : void
     {
-        $post->setCreatedAt(new \DateTimeImmutable());
+//        $post->setCreatedAt(new \DateTimeImmutable());
+//        $post->setUpdatedAt(new \DateTimeImmutable());
 
         /**
          * Tutaj możemy dodać potrzebną logikę

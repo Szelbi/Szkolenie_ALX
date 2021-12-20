@@ -38,7 +38,7 @@ class DoctrinePostRepository implements PostRepositoryInterface
     }
 
 	public function store(Post $post) {
-		$post->setCreatedAt(new \DateTimeImmutable());
+		$post->setUpdatedAt(new \DateTimeImmutable());
 		$this->manager->persist($post);
 		$this->manager->flush();
     }

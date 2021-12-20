@@ -51,6 +51,7 @@ class Post
     {
         $datetime = new \DateTimeImmutable();
         $this->setCreatedAt($datetime);
+        $this->setUpdatedAt($datetime);
     }
 
     public function getId(): ?int
