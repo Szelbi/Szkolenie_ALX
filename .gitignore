@@ -14,7 +14,12 @@
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
 
-###> phpunit/phpunit ###
-/phpunit.xml
-.phpunit.result.cache
 ###< phpunit/phpunit ###
+/.idea/dataSources.xml
+/.idea/deployment.xml
+/.idea/modules.xml
+/.idea/php.xml
+/.idea/phpunit.xml
+/.idea/Szkolenie_ALX.iml
+/.idea/vcs.xml
+/.idea/webServers.xml
