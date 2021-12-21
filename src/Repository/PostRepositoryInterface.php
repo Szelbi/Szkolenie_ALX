@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Post;
+use Doctrine\ORM\Query;
 
 interface PostRepositoryInterface
 {
@@ -12,7 +13,7 @@ interface PostRepositoryInterface
     /*
      * interface zwraca Query z doctrine, no trudno :) potrzebujem go do paginatora.
      */
-    public function getFindAllQuery(): \Doctrine\ORM\Query;
+    public function getFindAllQuery(): Query;
 
 
     public function store(Post $post);
