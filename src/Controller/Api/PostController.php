@@ -38,13 +38,6 @@ final class PostController
             return new JsonResponse($errorsString);
         }
 
-        //        $post->setTitle($json->title);
-        //        $post->setText($json->text);
-        //        $post->setAuthor($json->author);
-        //
-        //        $entityManager->persist($post);
-        //        $entityManager->flush();
-
         return new JsonResponse($newPostDto, 200);
     }
 }
