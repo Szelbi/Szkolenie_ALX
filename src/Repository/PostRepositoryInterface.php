@@ -17,4 +17,6 @@ interface PostRepositoryInterface
 
 
     public function store(Post $post);
+
+    public function findById(string $id) : Post;
 }

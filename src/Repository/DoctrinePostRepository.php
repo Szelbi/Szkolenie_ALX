@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Post;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectRepository;
@@ -27,7 +28,7 @@ class DoctrinePostRepository implements PostRepositoryInterface
     }
 
 
-    public function getFindAllQuery(): \Doctrine\ORM\Query
+    public function getFindAllQuery(): Query
     {
         $qb = $this->repository
             ->createQueryBuilder('p')
@@ -41,5 +42,18 @@ class DoctrinePostRepository implements PostRepositoryInterface
 		$post->setUpdatedAt(new \DateTimeImmutable());
 		$this->manager->persist($post);
 		$this->manager->flush();
+    }
+
+
+    public function findById($id) : Post {
+
+        $qb = $this->repository
+            ->createQueryBuilder('p')
+            ->andWhere("p.id = :id")
+            ->andWhere('p.deletedAt IS NULL')
+            ->setParameter('id', $id);
+
+        return $qb->getQuery()->getOneOrNullResult();
+
     }
 }

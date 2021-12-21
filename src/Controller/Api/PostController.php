@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
-use App\Entity\Post;
-use App\Form\PostType;
+use App\Repository\PostRepositoryInterface;
+use App\Service\Dto\GetPostUseCase;
 use App\Service\Dto\NewPostDto;
+use App\Service\Dto\GetPostDto;
 use App\Service\NewPostUseCase;
 use App\Utils\Validator\AppValidatorInterface;
-use JetBrains\PhpStorm\Pure;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,12 +21,16 @@ final class PostController extends AbstractController
 {
 
     #[Route('/{id}', name: 'api_post_show', methods: ['GET'])]
-    public function show(Post $post, SerializerInterface $serializer): JsonResponse
+    public function show(
+        string $id,
+        SerializerInterface $serializer,
+        GetPostUseCase $useCase
+    ): JsonResponse
     {
 
+        $post = $useCase($id);
 
-
-        $post = $serializer->serialize($post, 'json', ['groups' => 'show_post']);
+        $post = $serializer->serialize($post, 'json');
 
         return new JsonResponse(data: $post, json: true);
     }
