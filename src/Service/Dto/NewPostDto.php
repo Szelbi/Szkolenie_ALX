@@ -63,6 +63,4 @@ final class NewPostDto
         return $this->author;
     }
 
-
-
 }

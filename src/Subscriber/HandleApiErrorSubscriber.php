@@ -1,22 +1,26 @@
 <?php
 declare(strict_types=1);
 
+
 namespace App\Subscriber;
 
+
+use App\Utils\Validator\ValidationException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Psr\Log\LoggerInterface;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 final class HandleApiErrorSubscriber implements EventSubscriberInterface
 {
-
     public function __construct(
         private string $env,
         private LoggerInterface $logger
-    ) {
-    }
+    )
+    {}
 
     public static function getSubscribedEvents()
     {
@@ -29,37 +33,38 @@ final class HandleApiErrorSubscriber implements EventSubscriberInterface
 
     public function processException(ExceptionEvent $event)
     {
-
-        //ten subscriber powinien obsługiwać wyłącznie błędy z API
-        // dla środowiska PROD zwracamy wiadomość "Ops, something went wrong"
-        // dla środowiska DEV zwracamy pełne informacje o błędzie
-        // LoggerInterface
-
-        $request = $event->getRequest();
-
-        if (!str_contains($request->getPathInfo(), 'api')) {
-            return false;
-        }
-
+        $path = $event->getRequest()->getPathInfo();
         $exception = $event->getThrowable();
 
-        if ($this->env == 'dev') {
-            $error = $exception->getMessage();
-        } else {
-            $error = 'Ops, something went wrong';
+        //możemy sprawdzić czy zapytanie jest do API, również (a nawet lepiej by było tak zrobić)
+        //na podstawie nagłówka ContentType i Accept
+        if (!str_contains($path, '/api') ) {
+            return;
         }
 
-        $response = new JsonResponse(['error' => $error], status: 500);
 
-        $this->logger->error($exception->getMessage(), [
-            'file'  => $exception->getFile(),
-            'code'  => $exception->getCode(),
-            'trace' => $exception->getTrace()
-        ]);
+        //Poniższa ifologia zasługuje na mały refaktoring
+        if ('prod' === $this->env) {
+            $response = new JsonResponse(['error' => 'Oops something went wrong'],status: 500);
+            if ($exception instanceof ValidationException) {
+                $response = new JsonResponse(['error' => $exception->getMessage()],status: Response::HTTP_BAD_REQUEST);
+            }
+        }
+
+        if ('dev' === $this->env) {
+            $response = new JsonResponse(['error' => $exception->getMessage()],status: 500);
+            if ($exception instanceof ValidationException) {
+
+                $response = new JsonResponse(['error' => $exception->getMessage()],status: Response::HTTP_BAD_REQUEST);
+            }
+        }
 
         $event->setResponse($response);
 
-        return true;
-    }
+        $this->logger->error($exception->getMessage(), [
+            'file' => $exception->getFile(),
+            'code' => $exception->getCode()
 
+        ]);
+    }
 }

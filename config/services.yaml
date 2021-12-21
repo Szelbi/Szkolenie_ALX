@@ -24,8 +24,11 @@ services:
     App\Subscriber\HandleApiErrorSubscriber:
         arguments: ["%kernel.environment%"]
 
-
     App\Controller\Api\PostController:
         tags: [controller.service_arguments]
+
+    App\Utils\Validator\AppValidatorInterface:
+        alias: App\Utils\Validator\SymfonyAppValidator
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
