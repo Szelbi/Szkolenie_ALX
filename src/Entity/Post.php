@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\DoctrinePostRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity()
@@ -14,21 +15,25 @@ class Post
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"show_post"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"show_post"})
      */
     private $text;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"show_post"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Groups({"show_post"})
      */
     private $createdAt;
 
@@ -39,6 +44,7 @@ class Post
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"show_post"})
      */
     private $author;
 
@@ -46,6 +52,13 @@ class Post
      * @ORM\Column(type="datetime_immutable", nullable=true)
      */
     private $updatedAt;
+
+    /**
+     * Many features have one product. This is the owning side.
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="posts")
+     * @ORM\JoinColumn(name="usr_id", referencedColumnName="id")
+     */
+    private $user;
 
     public function __construct()
     {
@@ -130,4 +143,13 @@ class Post
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
 }

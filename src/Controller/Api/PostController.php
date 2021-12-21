@@ -4,40 +4,52 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Entity\Post;
+use App\Form\PostType;
 use App\Service\Dto\NewPostDto;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Service\NewPostUseCase;
+use App\Utils\Validator\AppValidatorInterface;
+use JetBrains\PhpStorm\Pure;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use App\Utils\Serializer\SerializerInterface;
 
 #[Route('/api/post')]
-final class PostController
+final class PostController extends AbstractController
 {
-
     #[Route('/{id}', name: 'api_post_show', methods: ['GET'])]
     public function show(Post $post, SerializerInterface $serializer): JsonResponse
     {
-        $post = $serializer->serialize($post, 'json');
-
+        $post = $serializer->serialize($post, 'json', ['groups' => 'show_post']);
         return new JsonResponse(data: $post, json: true);
     }
 
     #[Route('', name: 'api_post_new', methods: ['POST'])]
-    public function new(Request $request, ValidatorInterface $validator, SerializerInterface $serializer): JsonResponse
-    {
-        $json       = $request->getContent();
-        $newPostDto = $serializer->deserialize($json, NewPostDto::class, 'json');
+    public function new(
+        Request               $request,
+        SerializerInterface   $serializer,
+        AppValidatorInterface $validator,
+        NewPostUseCase        $useCase
+    ): JsonResponse {
+        $json = $request->getContent();
+        $newPostDto = $serializer->deserialize($json, NewPostDto::class, 'json',
+            [AbstractNormalizer::ALLOW_EXTRA_ATTRIBUTES => false]
+        );
 
-        $errors = $validator->validate($newPostDto);
+        $validator->validate($newPostDto);
 
-        if (count($errors) > 0) {
+        $useCase($newPostDto);
 
-            $errorsString = (string) $errors;
-
-            return new JsonResponse($errorsString);
-        }
-
-        return new JsonResponse($newPostDto, 200);
+        return new JsonResponse('Wspanialy sukces', 200);
     }
+
+    // @TODO list posts in api
+    //	#[Route('/', name: 'api_post_show', methods: ['GET'])]
+    //	public function index(Post $post, SerializerInterface $serializer): JsonResponse
+    //	{
+    //		$post = $serializer->serialize($post, 'json');
+    //		return new JsonResponse(data: $post, json: true);
+    //	}
 }
