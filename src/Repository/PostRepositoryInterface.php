@@ -15,7 +15,6 @@ interface PostRepositoryInterface
      */
     public function getFindAllQuery(): Query;
 
-
     public function store(Post $post);
 
     public function findById(string $id) : Post;

@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Repository\DoctrinePostRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -13,7 +12,7 @@ class Post
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
+     * @ORM\GeneratedValueńń
      * @ORM\Column(type="integer")
      * @Groups({"show_post"})
      */
@@ -62,9 +61,10 @@ class Post
 
     public function __construct()
     {
-        $datetime = new \DateTimeImmutable();
-        $this->setCreatedAt($datetime);
-        $this->setUpdatedAt($datetime);
+		$dateTime = new \DateTimeImmutable();
+		$this->setCreatedAt($dateTime);
+		$this->setUpdatedAt($dateTime);
+
     }
 
     public function getId(): ?int
@@ -125,7 +125,7 @@ class Post
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(\DateTimeImmutable $deletedAt): self
+    public function setDeletedAt(?\DateTimeImmutable $deletedAt): self
     {
         $this->deletedAt = $deletedAt;
 
@@ -144,12 +144,28 @@ class Post
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getUser()
     {
         return $this->user;
     }
 
+	/**
+	 * @param mixed $user
+	 * @return Post
+	 */
+	public function setUser($user)
+    {
+		$this->user = $user;
+		return $this;
+	}
+
+	/**
+	 * @param mixed $id
+	 * @return Post
+	 */
+	public function setId($id)
+	{
+		$this->id = $id;
+        return $this;
+    }
 }

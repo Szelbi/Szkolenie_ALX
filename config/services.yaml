@@ -21,14 +21,22 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
 
-    App\Subscriber\HandleApiErrorSubscriber:
-        arguments: ["%kernel.environment%"]
 
     App\Controller\Api\PostController:
-        tags: [controller.service_arguments]
+        tags: ['controller.service_arguments']
+
+    App\Subscriber\HandleApiErrorSubscriber:
+        arguments: ["%kernel.environment%", "@monolog.logger.api"]
 
     App\Utils\Validator\AppValidatorInterface:
         alias: App\Utils\Validator\SymfonyAppValidator
+
+
+# service jest "publiczny" na potrzeby testu, normalnie byłoby to w services_test.yaml.
+    App\Repository\PostRepositoryInterface:
+        alias: App\Repository\DoctrinePostRepository
+        public: true
+
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
